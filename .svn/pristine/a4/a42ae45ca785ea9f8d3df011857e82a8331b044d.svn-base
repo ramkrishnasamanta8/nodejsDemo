@@ -1,0 +1,14 @@
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
+const configSchema = new Schema({
+    event_creater: { type: Schema.Types.ObjectId, trim: true },
+    earn_points:{type : Number, trim: true},
+    isearn:{type : Boolean, trim: true},
+    isread:{type : Boolean, trim: true},
+    is_transfer_to_wallet:{type : Boolean, trim: true},
+    owner_earn_points:{type : Boolean, trim: true},
+    type_of_event: { type: String, enum: ['add_bio','add_business_hours','amenities','comment','cover_picture','handler_name','interests','like','post','profile_picture','signup_using_referral_code','spirit_animal','sub_interest','successful_referral'], trim: true, lowercase: true },
+  
+}, {timestamps: true,   });
+
+module.exports = mongoose.model("TransactionInfo", configSchema);

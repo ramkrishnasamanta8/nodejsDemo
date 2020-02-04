@@ -1,0 +1,72 @@
+const mongoose = require( "mongoose" );
+
+const Comments = mongoose.model( "Comments" );
+
+const add = async ( data ) => {    
+	//console.log('-----------data1'+JSON.stringify(data))
+    const comments = new Comments( data );
+    //user.setPass( data.password ); //Change user passwor to MD5
+    return await comments.save();
+};
+
+const editConfig = async ( id, data ) => { 
+    if(data && id) {
+        try {
+            var sharesConfig = {
+                commentType : data.commentType,
+                commentDesc : data.commentDesc,
+                gikkle : data.gikkle,
+                isEdit : data.isEdit,
+                status : data.status
+            };
+            var commentsData = await Comments.updateOne({ _id: id }, sharesConfig, {omitUndefined:true});
+            if(commentsData.n && commentsData.nModified){
+                return findConfig(id);
+            }else if(commentsData.n == 0){
+                return 'Not found:('
+            }else{
+                return 'Not update:)'
+            }
+        } catch (e) {
+            console.error(e);
+            return e;
+        }
+    }else{
+        return null;
+    }
+};
+
+// // const deleteUser = ( user ) => user.remove();
+
+const deleteConfig = async (id) => {
+    var commentsData = await Comments.deleteOne({ _id: id });
+    //return shareData;
+    if(commentsData.n && commentsData.deletedCount){
+        return 'Deleted successfully';
+    }else if(commentsData.n == 0){
+        return 'Not found:('
+    }else{
+        return 'Not update:)'
+    }
+}
+const findConfig = (id) => {
+    try {
+        var data;
+        if(id){
+            data = Comments.findById(id);
+        }else{
+            data = Comments.find();
+        }
+        return data;
+    } catch (e) {
+        console.error(e);
+    }
+    
+}
+
+module.exports = {
+    add,
+     editConfig,
+     deleteConfig,
+     findConfig,
+};

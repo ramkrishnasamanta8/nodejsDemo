@@ -1,0 +1,66 @@
+const mongoose = require( "mongoose" );
+
+const Likes = mongoose.model( "Likes" );
+
+const add = ( data ) => {
+    const likes = new Likes( data );
+    //user.setPass( data.password ); //Change user passwor to MD5
+    return likes.save();
+};
+
+const editLikes = async ( id, data ) => {
+    if(data && id) {
+        try {
+            var like = {
+                gikkles : data.gikkles,
+                type : data.type,
+                status : data.status
+            };
+            var likeData = await Likes.updateOne({ _id: id }, like, {omitUndefined:true});
+            if(likeData.n && likeData.nModified){
+                return findConfig(id);
+            }else if(likeData.n == 0){
+                return 'Not found:('
+            }else{
+                return 'Not update:)'
+            }
+        } catch (e) {
+            console.error(e);
+            return e;
+        }
+    }else{
+        return null;
+    }
+};
+
+const deleteLikes = async (id) => {
+    var likeData = await Likes.deleteOne({ _id: id });
+    //return configData;
+    if(likeData.n && likeData.deletedCount){
+        return 'Deleted successfully';
+    }else if(likeData.n == 0){
+        return 'Not found:('
+    }else{
+        return 'Not update:)'
+    }
+}
+const findLikes = (id) => {
+    try {
+        var data;
+        if(id){
+            data = Likes.findById(id);
+        }else{
+            data = Likes.find();
+        }
+        return data;
+    } catch (e) {
+        console.error(e);
+    } 
+}
+
+module.exports = {
+    add,
+    editLikes,
+    deleteLikes,
+    findLikes,
+};

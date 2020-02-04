@@ -1,0 +1,91 @@
+const mongoose = require("mongoose");
+const md5 = require("md5");
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+	userName: { type: String, required: true, trim: true, lowercase: true, unique:true},//emailid
+    password: { type: String, required: true, trim: true },
+    userType: { type: String, enum: ['customer', 'partner'], default: 'customer', lowercase: true },
+    status: { type: String, enum: ['active', 'inactive'], default: 'active', lowercase: true },
+    profileSetup: {
+        isDone: { type: Boolean, default: false },
+        isUpdateHandler: { type: Boolean, default: false },
+        interests: [Schema.Types.ObjectId],
+        subInterests: [Schema.Types.ObjectId],
+        bannerImage: { type: String },
+        profileImage: { type: String },
+		animalIcon: { type: String }
+    },
+    address:[{
+        street:{type:String,default: ''},
+        city:{type:String,default: ''},
+        state:{type:String,default: ''},
+        country:{type:String,default: ''},
+        zipcode:{type:String,default: ''}
+    }],
+    connection: {  //rename total by ram
+        followers: [Schema.Types.ObjectId],
+        following: [Schema.Types.ObjectId],
+        friends: [Schema.Types.ObjectId],  //added
+        myForumSubscribers: [Schema.Types.ObjectId],
+        myBlogSubscribers: [Schema.Types.ObjectId]
+    },
+    personal: {
+        firstName: { type: String, required: true, trim: true},
+        lastName: { type: String, required: true, trim: true},
+        handle: { type: String, trim: true , required: true}, //rename from handlerName
+        website: { type: String, trim: true},
+        mobile: { type: String, trim: true , required: true},  // rename from phone
+        email: { type: String, trim: true, required: true},
+        workplace: { type: String, trim: true },
+        education: { type: String, trim: true },
+        relationship: { type: String, enum: ['single','married'],lowercase: true  }, // modified
+        birthday: { type: Date, default: Date.now },
+        gender: { type: String, enum: ['male', 'female','other'], default: 'Male',lowercase: true },  //added by ram
+        desc: { type: String, trim: true },
+        blog: { type: String, trim: true },
+        timezone: { type: String, trim: true }  //added by ram
+    },
+    security: {
+        isPrivate: { type: Boolean, default: false , required: true},
+        SecurityQuestionFirst: { type: String, trim: true , required: true},
+        SecurityAnswerFirst: { type: String, trim: true , required: true},
+        SecurityQuestionSecond: { type: String, trim: true , required: true},
+        SecurityAnswerSecond: { type: String, trim: true , required: true},
+        SecurityQuestionThird: { type: String, trim: true , required: true},
+        SecurityAnswerThird: { type: String, trim: true , required: true},
+        otp: { type: String, trim: true }
+    },
+    partner: { 
+		businessName: { type: String, trim: true }, 
+		amenities: [Schema.Types.ObjectId], // change obj to arr 
+		businessTime: {type:String, default:''},
+		avgStarRating:{type:Number, default:0},
+		avgPrice:{type:Number, default:0},
+		redeemption:{
+			used: {type:Number, default:0},
+			total: {type:Number, default:0}
+        }
+        
+	},
+	wallet: {
+		limit: {type:Number, default:0},
+		balance: {type:Number, default:0}
+	},
+	bank: {
+		limit: {type:Number, default:0},
+		balance: {type:Number, default:0}
+    },
+    timezone: {type:String}
+}, {timestamps: true,   });
+
+userSchema.methods.setPass = function (password) {
+	this.password = md5(password);
+};
+
+userSchema.methods.checkPass = function (password) {
+	return this.password === md5(password);
+};
+
+module.exports = mongoose.model("User", userSchema);

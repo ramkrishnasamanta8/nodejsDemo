@@ -1,0 +1,68 @@
+const mongoose = require( "mongoose" );
+
+const Shares = mongoose.model( "Shares" );
+
+const add = async ( data ) => {    
+	//console.log('-----------data1'+JSON.stringify(data))
+    const shares = new Shares( data );
+    //user.setPass( data.password ); //Change user passwor to MD5
+    return await shares.save();
+};
+
+const editConfig = async ( id, data ) => { 
+    if(data && id) {
+        try {
+            var sharesConfig = {
+                type : data.type
+            };
+            var sharesData = await Shares.updateOne({ _id: id }, sharesConfig, {omitUndefined:true});
+            if(sharesData.n && sharesData.nModified){
+                return findConfig(id);
+            }else if(sharesData.n == 0){
+                return 'Not found:('
+            }else{
+                return 'Not update:)'
+            }
+        } catch (e) {
+            console.error(e);
+            return e;
+        }
+    }else{
+        return null;
+    }
+};
+
+// // const deleteUser = ( user ) => user.remove();
+
+const deleteConfig = async (id) => {
+    var shareData = await Shares.deleteOne({ _id: id });
+    //return shareData;
+    if(shareData.n && shareData.deletedCount){
+        return 'Deleted successfully';
+    }else if(shareData.n == 0){
+        return 'Not found:('
+    }else{
+        return 'Not update:)'
+    }
+}
+const findConfig = (id) => {
+    try {
+        var data;
+        if(id){
+            data = Shares.findById(id);
+        }else{
+            data = Shares.find();
+        }
+        return data;
+    } catch (e) {
+        console.error(e);
+    }
+    
+}
+
+module.exports = {
+    add,
+     editConfig,
+     deleteConfig,
+     findConfig,
+};

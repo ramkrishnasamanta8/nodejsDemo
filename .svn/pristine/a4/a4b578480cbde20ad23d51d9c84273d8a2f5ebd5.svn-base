@@ -1,0 +1,87 @@
+const mongoose = require("mongoose");
+const md5 = require("md5");
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+	userName: { type: String, required: true, trim: true, lowercase: true },
+    password: { type: String, required: true, trim: true },
+    isActive: { type: Boolean, default: true },
+    userType: { type: String, enum: ['customer', 'partner'], default: 'customer', lowercase: true },
+    profileSetup: {
+        isDone: { type: Boolean, default: false },
+        isUpdateHandler: { type: Boolean, default: false },
+        interests: {},
+        subInterests: {},
+        bannerImage: { type: String },
+        profileImage: { type: String },
+		animalIcon: { type: String }
+    },
+    address:[{
+        street:{type:String},
+        city:{type:String},
+        state:{type:String},
+        country:{type:String},
+        zipcode:{type:String}
+    }],
+    total: {
+        followers: { type: Number, default: 0 },
+        following: { type: Number, default: 0 },
+        myForumSubscribers: { type: Number, default: 0 },
+        myBlogSubscribers: { type: Number, default: 0 }
+    },
+    personal: {
+        firstName: { type: String, required: true, trim: true, lowercase: true },
+        lastName: { type: String, required: true, trim: true, lowercase: true },
+        handlerName: { type: String, trim: true },
+        website: { type: String, trim: true, lowercase: true },
+        phone: { type: String, trim: true },
+        email: { type: String, trim: true, lowercase: true },
+        workplace: { type: String, trim: true },
+        education: { type: String, trim: true },
+        relationship: { type: String, trim: true },
+        birthday: { type: Date, default: Date.now },
+        desc: { type: String, trim: true },
+        blog: { type: String, trim: true }
+    },
+    security: {
+        isPrivate: { type: Boolean, default: false },
+        SecurityQuestionFirst: { type: String, trim: true },
+        SecurityAnswerFirst: { type: String, trim: true },
+        SecurityQuestionSecond: { type: String, trim: true },
+        SecurityAnswerSecond: { type: String, trim: true },
+        SecurityQuestionThird: { type: String, trim: true },
+        SecurityAnswerThird: { type: String, trim: true },
+        otp: { type: String, trim: true }
+    },
+    partner: { 
+		businessName: { type: String, trim: true }, 
+		amenities: {},
+		businessTime: {type:String, default:''},
+		avgStarRating:{type:Number, default:0},
+		avgPrice:{type:Number, default:0},
+		redeemption:{
+			used: {type:Number, default:0},
+			total: {type:Number, default:0}
+		}
+	},
+	wallet: {
+		limit: {type:Number, default:0},
+		balance: {type:Number, default:0}
+	},
+	bank: {
+		limit: {type:Number, default:0},
+		balance: {type:Number, default:0}
+    },
+    timezone: {type:String}
+}, {timestamps: true,   });
+
+userSchema.methods.setPass = function (password) {
+	this.password = md5(password);
+};
+
+userSchema.methods.checkPass = function (password) {
+	return this.password === md5(password);
+};
+
+module.exports = mongoose.model("User", userSchema);

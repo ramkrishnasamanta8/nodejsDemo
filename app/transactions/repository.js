@@ -1,0 +1,64 @@
+const mongoose = require( "mongoose" );
+const Transactions = mongoose.model( "Transactions" );
+
+const add = ( data ) => {
+    const transac = new Transactions( data );
+    //user.setPass( data.password ); //Change user passwor to MD5
+    return transac.save();
+};
+
+const editTransactions = async ( id, data ) => {
+    if(data && id) {
+        try {
+            var transaction = {
+                total_points : data.total_points,
+                type : data.type,
+            };
+            var tData = await Transactions.updateOne({ _id: id }, transaction, {omitUndefined:true});
+            if(tData.n && tData.nModified){
+                return findConfig(id);
+            }else if(tData.n == 0){
+                return 'Not found:('
+            }else{
+                return 'Not update:)'
+            }
+        } catch (e) {
+            console.error(e);
+            return e;
+        }
+    }else{
+        return null;
+    }
+};
+
+const deleteTransactions = async (id) => {
+    var tData = await Transactions.deleteOne({ _id: id });
+    //return configData;
+    if(tData.n && tData.deletedCount){
+        return 'Deleted successfully';
+    }else if(tData.n == 0){
+        return 'Not found:('
+    }else{
+        return 'Not update:)'
+    }
+}
+const findTransactions = (id) => {
+    try {
+        var data;
+        if(id){
+            data = Transactions.findById(id);
+        }else{
+            data = Transactions.find();
+        }
+        return data;
+    } catch (e) {
+        console.error(e);
+    } 
+}
+
+module.exports = {
+    add,
+    editTransactions,
+    deleteTransactions,
+    findTransactions,
+};
