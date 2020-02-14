@@ -1,6 +1,9 @@
 {
   "name": "node-starter",
   "version": "1.0.0",
+  "engines": {
+    "node": "13.2.0"
+  },
   "description": "node starter",
   "main": "index.js",
   "scripts": {    
