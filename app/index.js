@@ -8,6 +8,15 @@ const transactions = require("./transactions/router");
 const transactionInfo = require("./transactionInfo/router");
 const features = require("./features/router");
 const test = require("./test/router");
+const topics = require("./topics/router");
+const flags = require("./flags/router");
+const connections = require("./connections/router");
+const topicGroup = require("./topicGroup/router");
+const albums = require("./albums/router");
+const files = require("./files/router");
+const assets = require("./assets/router");
+const products = require("./products/router");
+const testJoin = require("./testJoin/router");
 
 
 //const articlesRouter = require( "./articles/router" );
@@ -26,5 +35,15 @@ module.exports = ( app ) => {
     app.use( "/transactionInfo", transactionInfo );
     app.use( "/features", features );
     app.use( "/test", test );
+    app.use( "/topics", topics );
+    app.use( "/flags", flags );
+    app.use( "/connections", connections );
+    app.use( "/topicGroup", topicGroup );
+    app.use( "/albums", albums );
+    app.use( "/files", files );
+    app.use( "/assets", assets );
+    app.use( "/products", products );
+    app.use( "/testJoin", testJoin );
+    
     //app.use( "/articles", validateToken, articlesRouter );
 };

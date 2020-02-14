@@ -1,11 +1,11 @@
 const mongoose = require( "mongoose" );
 
-const Login = mongoose.model( "Login" );
+const Test = mongoose.model( "Test" );
 const USER = mongoose.model( "User" );
 
 const add = async ( data ) => {
-    const login = new Login( data );
-    return await login.save();
+    const test = new Test( data );
+    return await test.save();
 };
 
 const editConfig = async ( id, data ) => {  
@@ -15,7 +15,7 @@ const editConfig = async ( id, data ) => {
                 value : data.value,
                 description : data.description
             };
-            var configData = await Login.updateOne({ _id: id }, config, {omitUndefined:true});
+            var configData = await Test.updateOne({ _id: id }, config, {omitUndefined:true});
             if(configData.n && configData.nModified){
                 return findConfig(id);
             }else if(configData.n == 0){
@@ -35,7 +35,7 @@ const editConfig = async ( id, data ) => {
 // const deleteUser = ( user ) => user.remove();
 
 const deleteConfig = async (id) => {
-    var configData = await Login.deleteOne({ _id: id });
+    var configData = await Test.deleteOne({ _id: id });
     //return configData;
     if(configData.n && configData.deletedCount){
         return 'Deleted successfully';
@@ -49,7 +49,8 @@ const findConfig = (id) => {
     try {
         var data;
         if(id){
-            data = Login.findById({ _id: id });     // by id
+            data = Test.findById(id).populate('address shipAddress');     // by id
+            //data = Test.findById({ _id: id });     // by id
             //data = Login.find({uname:'ram1',type:"cust 2"}).explain();    to view query
             //data = Login.find({"$or": [{"type": "staff"},{"uname": "ram"}]});  // or condition
             //data = Login.find({uname:'ram1',type:"cust 1"});  // and condition
@@ -57,7 +58,7 @@ const findConfig = (id) => {
 
             //console.log('-----------'+JSON.stringify(data))
         }else{
-            data = Login.find();
+            data = Test.find().populate('address shipAddress'); 
         }
         //console.log('-----------data'+JSON.stringify(data));
         return data;

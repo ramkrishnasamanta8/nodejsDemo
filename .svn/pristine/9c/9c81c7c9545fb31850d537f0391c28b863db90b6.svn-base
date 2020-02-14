@@ -1,0 +1,68 @@
+const mongoose = require( "mongoose" );
+const TopicGroup = mongoose.model( "TopicGroup" );
+
+const add = ( data ) => {
+    const topicGroup = new TopicGroup( data );
+    //user.setPass( data.password ); //Change user passwor to MD5
+    return topicGroup.save();
+};
+
+const editTopicGroup = async ( id, data ) => {
+    if(data && id) {
+        try {
+            var topicGroup = {
+                name : data.name,
+                description : data.description,
+                defaultImage : data.defaultImage,
+                count : data.count,
+                status : data.status,
+                isDefault : data.isDefault,
+            };
+            var tData = await TopicGroup.updateOne({ _id: id }, topicGroup, {omitUndefined:true});
+            if(tData.n && tData.nModified){
+                return findTopicGroup(id);
+            }else if(tData.n == 0){
+                return 'Not found:('
+            }else{
+                return 'Not update:)'
+            }
+        } catch (e) {
+            console.error(e);
+            return e;
+        }
+    }else{
+        return null;
+    }
+};
+
+const deleteTopicGroup = async (id) => {
+    var tData = await TopicGroup.deleteOne({ _id: id });
+    //return configData;
+    if(tData.n && tData.deletedCount){
+        return 'Deleted successfully';
+    }else if(tData.n == 0){
+        return 'Not found:('
+    }else{
+        return 'Not update:)'
+    }
+}
+const findTopicGroup = (id) => {
+    try {
+        var data;
+        if(id){
+            data = TopicGroup.findById(id);
+        }else{
+            data = TopicGroup.find();
+        }
+        return data;
+    } catch (e) {
+        console.error(e);
+    } 
+}
+
+module.exports = {
+    add,
+    editTopicGroup,
+    deleteTopicGroup,
+    findTopicGroup,
+};

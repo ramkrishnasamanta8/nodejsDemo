@@ -1,0 +1,65 @@
+const mongoose = require( "mongoose" );
+const Connections = mongoose.model( "Connections" );
+
+const add = ( data ) => {
+    const connections = new Connections( data );
+    //user.setPass( data.password ); //Change user passwor to MD5
+    return connections.save();
+};
+
+const editConnections = async ( id, data ) => {
+    if(data && id) {
+        try {
+            var connections = {
+                action : data.action,
+                type : data.type,
+                status : data.status
+            };
+            var tData = await Connections.updateOne({ _id: id }, connections, {omitUndefined:true});
+            if(tData.n && tData.nModified){
+                return findConnections(id);
+            }else if(tData.n == 0){
+                return 'Not found:('
+            }else{
+                return 'Not update:)'
+            }
+        } catch (e) {
+            console.error(e);
+            return e;
+        }
+    }else{
+        return null;
+    }
+};
+
+const deleteConnections = async (id) => {
+    var tData = await Connections.deleteOne({ _id: id });
+    //return configData;
+    if(tData.n && tData.deletedCount){
+        return 'Deleted successfully';
+    }else if(tData.n == 0){
+        return 'Not found:('
+    }else{
+        return 'Not update:)'
+    }
+}
+const findConnections = (id) => {
+    try {
+        var data;
+        if(id){
+            data = Connections.findById(id);
+        }else{
+            data = Connections.find();
+        }
+        return data;
+    } catch (e) {
+        console.error(e);
+    } 
+}
+
+module.exports = {
+    add,
+    editConnections,
+    deleteConnections,
+    findConnections,
+};

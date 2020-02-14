@@ -1,0 +1,55 @@
+const extractObject = require("../../utilities/").extractObject;
+const logger = require("../../utilities/logger");
+const repository = require("./repository");
+// anup//
+exports.add = async (req, res, next) => {
+	try {
+		//console.log(req.body);
+		//console.log(req.query);
+		//console.log(req.params);
+		console.log(req.file);
+		//console.log(req.files);
+		const savedTopicGroup = await repository.add(req.file);
+		res.success(savedTopicGroup);
+		//res.success(extractObject(savedConfig, ["key", "value"],));
+	}
+	catch (err) {
+		res.mongooseError(err)
+		//res.send( err );
+	}
+};
+
+exports.edit = async (req, res) => {
+	try {
+		var id = req.params.id ? req.params.id : null;
+		var data = req.body ? req.body : null;
+		const editedData = await repository.editTopicGroup(id, data);
+		res.success(editedData);
+	}
+	catch (err) {
+		res.send(err);
+	}
+};
+
+exports.all = async (req, res) => {
+	try {
+		var id = req.params.id ? req.params.id : null;
+		const findTopicGroup = await repository.findTopicGroup(id);
+		res.success(findTopicGroup);
+	}
+	catch (err) {		
+		res.mongooseError(err);
+	}
+};
+
+exports.delete = async (req, res) => {
+	try {
+		var id = req.params.id ? req.params.id : null;
+		const deleteTopicGroup = await repository.deleteTopicGroup(id);		
+		res.success(deleteTopicGroup);
+	}
+	catch (err) {
+		console.log(err);
+		res.send(err);
+	}
+};
